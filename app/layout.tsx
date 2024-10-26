@@ -2,15 +2,14 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
+const kilimanJaroSans = localFont({
+  src: "./fonts/KilimanjaroSans-Regular.woff2",
+  variable: "--font-kiliman-jaro-sans",
 });
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
+
+const domaineDisplay = localFont({
+  src: "./fonts/TestDomaineDisplay-Regular-BF66174a224cb3d.woff2",
+  variable: "--font-domaine-display",
 });
 
 export const metadata: Metadata = {
@@ -26,7 +25,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${kilimanJaroSans.variable} ${domaineDisplay.variable} antialiased`}
       >
         {children}
       </body>
