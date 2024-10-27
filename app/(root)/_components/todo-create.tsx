@@ -36,6 +36,7 @@ const schema: yup.ObjectSchema<FormFields> = yup.object({
     .string()
     .oneOf(["low", "medium", "high"] as const)
     .required(),
+  id: yup.string().required(),
 });
 
 const TodoCreate = ({
