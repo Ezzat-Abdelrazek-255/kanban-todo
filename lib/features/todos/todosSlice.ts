@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { TodoItem } from "@/types";
+import { snakeToCamel } from "@/utils";
 
 type TodoState = {
   todos: TodoItem[];
@@ -28,8 +29,21 @@ const todosSlice = createSlice({
   initialState,
   reducers: {
     initializeTodos: (state, action: PayloadAction<{ todos: TodoItem[] }>) => {
-      console.log(action.payload.todos);
-      state.todos = action.payload.todos;
+      const initialTodos: TodoItem[] = [];
+      action.payload.todos.forEach((todo) => {
+        const newTodo = {};
+        const todosKeys = Object.keys(todo);
+        const todosValues = Object.values(todo);
+        todosKeys.forEach((key: string, i: number): void => {
+          (newTodo as Record<string, string | boolean | FileList>)[
+            snakeToCamel(key)
+          ] = todosValues[i];
+        });
+        initialTodos.push(newTodo as TodoItem);
+      });
+      console.log(initialTodos);
+
+      state.todos = initialTodos;
     },
     openTodo: (state, action: PayloadAction<{ id: string }>) => {
       const todoIndex = findTodoIndex(action.payload.id, state.todos);

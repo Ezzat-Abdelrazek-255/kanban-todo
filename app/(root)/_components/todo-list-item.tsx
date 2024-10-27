@@ -1,11 +1,13 @@
 import { openTodo } from "@/lib/features/todos/todosSlice";
 import { TodoItem } from "@/types";
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import TodoDropdown from "./todo-dropdown";
+import TodoEdit from "./todo-edit";
 
 const TodoListItem = ({ todo }: { todo: TodoItem }) => {
   const dispatch = useDispatch();
+  const [isEditOpen, setIsEditOpen] = useState(false);
 
   return (
     <li className="w-[75rem] flex items-center justify-between border-muted border-[1px] p-6 rounded-[8px] h-[7.25rem]">
@@ -20,7 +22,7 @@ const TodoListItem = ({ todo }: { todo: TodoItem }) => {
       </div>
 
       <div className="items-end flex flex-col justify-between h-full">
-        <TodoDropdown todo={todo} />
+        <TodoDropdown todo={todo} setIsEditOpen={setIsEditOpen} />
         <div className="flex items-center gap-4 font-sans">
           <div className="uppercase bg-foreground text-background rounded-[4px] text-base px-4 py-2 ">
             {todo.state}
@@ -30,6 +32,7 @@ const TodoListItem = ({ todo }: { todo: TodoItem }) => {
           </div>
         </div>
       </div>
+      {isEditOpen && <TodoEdit todo={todo} setIsEditOpen={setIsEditOpen} />}
     </li>
   );
 };
