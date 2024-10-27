@@ -18,25 +18,31 @@ const TaskView = ({ todo }: { todo: TodoItem }) => {
           <X size="14" />
         </button>
         <div className="w-full h-[11rem] relative ">
-          <Image fill sizes="80vw" src={todo.coverImgUrl} alt={todo.title} />
+          <Image
+            fill
+            sizes="80vw"
+            className="w-full h-full object-cover"
+            src={todo.coverImgUrl}
+            alt={todo.title}
+          />
         </div>
         <div className="flex flex-col p-6 gap-4">
           <h2 className="font-sans text-2xl">{todo.title}</h2>
           <p className="text-xs font-serif">{todo.description}</p>
           <p className="font-sans flex items-center gap-1 uppercase text-xs">
-            State:
+            <span className="inline-block w-[4rem]">State:</span>
             <span className="inline-block py-1 px-2 bg-yellow-500">
               {todo.state}
             </span>
           </p>
           <p className="font-sans flex items-center gap-1 uppercase text-xs">
-            Priority:
+            <span className="inline-block w-[4rem]">Priority:</span>
             <span className="inline-block py-1 px-2 bg-red-500">
               {todo.priority}
             </span>
           </p>
           <p className="font-sans flex items-center gap-1 uppercase text-xs">
-            Owner:
+            <span className="inline-block w-[4rem]">Owner:</span>
             <span className="inline-block py-1 px-2 bg-foreground text-background">
               {todo.ownerUsername}
             </span>
