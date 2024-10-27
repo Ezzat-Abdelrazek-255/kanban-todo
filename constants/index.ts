@@ -32,8 +32,8 @@ export const PRIORITY_FILTER_OPTIONS = [
   },
 
   {
-    title: "medium",
-    value: "Medium",
+    title: "Medium",
+    value: "medium",
   },
 
   {
