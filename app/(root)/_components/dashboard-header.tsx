@@ -15,7 +15,7 @@ const DashboardHeader = async () => {
     .eq("id", data.user.id);
 
   return (
-    <header className="py-6 px-8 border-b-[1px] border-b-muted flex gap-4 items-center">
+    <header className="py-6  border-b-[1px] border-b-muted flex gap-4 items-center">
       {userData && userData[0].username}
       <Button variant="outline">Logout</Button>
     </header>
