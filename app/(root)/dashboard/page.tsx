@@ -6,12 +6,16 @@ import { Input } from "@/components/ui/input";
 import React from "react";
 import { ArrowUpDown, Filter, List, WalletCards } from "lucide-react";
 import TodoList from "../_components/todo-list";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/lib/store";
 import TodoView from "../_components/todo-view";
-import { selectOpenTodo } from "@/lib/features/todos/todosSlice";
+import { selectOpenTodo, setFilter } from "@/lib/features/todos/todosSlice";
+import TodoFilter from "../_components/todo-filter";
+import { TodoItem } from "@/types";
+import { PRIORITY_FILTER_OPTIONS, STATE_FILTER_OPTIONS } from "@/constants";
 
 const DashboardPage = () => {
+  const dispatch = useDispatch();
   const openTodo = useSelector((state: RootState) => selectOpenTodo(state));
 
   return (
@@ -24,10 +28,28 @@ const DashboardPage = () => {
               placeholder="Search Tasks"
               className="text-base placeholder:white/50 border-muted border-[1px] px-4 py-2 font-sans"
             />
-            <Button className="bg-muted text-white flex gap-1 items-center px-4 py-2">
-              <Filter />
-              Filter
-            </Button>
+            <TodoFilter
+              placeholder="Filter by state"
+              options={STATE_FILTER_OPTIONS}
+              onChange={(state) =>
+                dispatch(
+                  setFilter({
+                    state: state as TodoItem["state"],
+                  }),
+                )
+              }
+            />
+            <TodoFilter
+              placeholder="Filter by priority"
+              options={PRIORITY_FILTER_OPTIONS}
+              onChange={(state) =>
+                dispatch(
+                  setFilter({
+                    priority: state as TodoItem["priority"],
+                  }),
+                )
+              }
+            />
             <Button className="bg-muted text-white flex gap-1 items-center px-4 py-2">
               <ArrowUpDown />
               Sort

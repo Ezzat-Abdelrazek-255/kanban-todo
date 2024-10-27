@@ -1,5 +1,47 @@
 import { TodoItem } from "@/types";
 
+export const STATE_FILTER_OPTIONS = [
+  {
+    title: "All",
+    value: "all",
+  },
+  {
+    title: "Todo",
+    value: "todo",
+  },
+
+  {
+    title: "Doing",
+    value: "doing",
+  },
+
+  {
+    title: "Done",
+    value: "Done",
+  },
+];
+
+export const PRIORITY_FILTER_OPTIONS = [
+  {
+    title: "All",
+    value: "all",
+  },
+  {
+    title: "Low",
+    value: "low",
+  },
+
+  {
+    title: "medium",
+    value: "Medium",
+  },
+
+  {
+    title: "High",
+    value: "high",
+  },
+];
+
 export const DEMO_LOGIN_CREDENTIALS = [
   {
     username: "task-owner-1",
