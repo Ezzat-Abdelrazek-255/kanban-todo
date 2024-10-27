@@ -17,8 +17,26 @@ import { Loader, X } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 import { redirect } from "next/navigation";
 import { PostgrestError } from "@supabase/supabase-js";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
 
-type FormFields = ReturnType<typeof addTodo>["payload"];
+type FormFields = Omit<
+  ReturnType<typeof addTodo>["payload"],
+  "isOpen" | "coverImgUrl" | "ownerUsername"
+>;
+
+const schema: yup.ObjectSchema<FormFields> = yup.object({
+  title: yup.string().required(),
+  description: yup.string().required(),
+  state: yup
+    .string()
+    .oneOf(["todo", "doing", "done"] as const)
+    .required(),
+  priority: yup
+    .string()
+    .oneOf(["low", "medium", "high"] as const)
+    .required(),
+});
 
 const TodoCreate = ({
   setIsOpen,
@@ -30,7 +48,9 @@ const TodoCreate = ({
     control,
     handleSubmit,
     formState: { isSubmitting },
-  } = useForm<FormFields>();
+  } = useForm<FormFields>({
+    resolver: yupResolver(schema),
+  });
 
   const dispatch = useDispatch();
   const [error, setError] = useState<PostgrestError | null>(null);
@@ -47,7 +67,7 @@ const TodoCreate = ({
       .select("username")
       .eq("id", authData.user.id);
 
-    const { error: insertError } = await supabase
+    const { data: insertedData, error: insertError } = await supabase
       .from("todos")
       .insert({
         title: data.title,
@@ -59,10 +79,19 @@ const TodoCreate = ({
       })
       .select()
       .single();
+
     if (insertError) {
       return setError(insertError);
     }
-    dispatch(addTodo(data));
+    dispatch(
+      addTodo({
+        ...data,
+        id: insertedData.id,
+        coverImgUrl: "",
+        ownerUsername: userData && userData[0].username,
+        isOpen: false,
+      }),
+    );
     setIsOpen(false);
   };
 

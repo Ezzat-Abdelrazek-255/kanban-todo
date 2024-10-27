@@ -9,6 +9,7 @@ type TodoState = {
     state: "all" | "todo" | "doing" | "done";
     search: string;
   };
+  isLoading: boolean;
 };
 
 const initialState: TodoState = {
@@ -18,8 +19,8 @@ const initialState: TodoState = {
     state: "all",
     search: "",
   },
+  isLoading: true,
 };
-
 const findTodoIndex = function(id: string, todos: TodoItem[]) {
   return todos.findIndex((todo) => todo.id === id);
 };
@@ -41,9 +42,9 @@ const todosSlice = createSlice({
         });
         initialTodos.push(newTodo as TodoItem);
       });
-      console.log(initialTodos);
 
       state.todos = initialTodos;
+      state.isLoading = false;
     },
     openTodo: (state, action: PayloadAction<{ id: string }>) => {
       const todoIndex = findTodoIndex(action.payload.id, state.todos);
@@ -66,11 +67,10 @@ const todosSlice = createSlice({
     },
     addTodo: (
       state,
-      action: PayloadAction<Omit<TodoItem, "id" | "createdAt" | "updatedAt">>,
+      action: PayloadAction<Omit<TodoItem, "createdAt" | "updatedAt">>,
     ) => {
       const newTodo: TodoItem = {
         ...action.payload,
-        id: Date.now().toString(),
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
