@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { TodoItem } from "@/types";
-import { TEST_TODOS } from "@/constants";
 
 type TodoState = {
   todos: TodoItem[];
@@ -12,7 +11,7 @@ type TodoState = {
 };
 
 const initialState: TodoState = {
-  todos: TEST_TODOS,
+  todos: [],
   filter: {
     priority: "all",
     state: "all",
@@ -28,6 +27,10 @@ const todosSlice = createSlice({
   name: "todos",
   initialState,
   reducers: {
+    initializeTodos: (state, action: PayloadAction<{ todos: TodoItem[] }>) => {
+      console.log(action.payload.todos);
+      state.todos = action.payload.todos;
+    },
     openTodo: (state, action: PayloadAction<{ id: string }>) => {
       const todoIndex = findTodoIndex(action.payload.id, state.todos);
 
@@ -129,6 +132,7 @@ export const selectFilteredTodos = (state: { todos: TodoState }) => {
 };
 
 export const {
+  initializeTodos,
   openTodo,
   closeTodo,
   addTodo,
