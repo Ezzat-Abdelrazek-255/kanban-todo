@@ -60,7 +60,7 @@ const TodoDropdown = ({
           <Button
             onClick={() => setIsEditOpen(true)}
             variant="outline"
-            className=" w-full"
+            className=" w-full flex gap-2 justify-between"
           >
             Edit
             <Pencil />
