@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import StoreProvider from "@/contexts/store-provider";
 import "./globals.css";
 
 const kilimanJaroSans = localFont({
@@ -24,11 +25,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
-      <body
-        className={`${kilimanJaroSans.variable} ${domaineDisplay.variable} antialiased`}
-      >
-        {children}
-      </body>
+      <StoreProvider>
+        <body
+          className={`${kilimanJaroSans.variable} ${domaineDisplay.variable} antialiased`}
+        >
+          {children}
+        </body>
+      </StoreProvider>
     </html>
   );
 }

@@ -24,7 +24,10 @@ const LoginPage = () => {
   const [error, setError] = useState<AuthError | null>(null);
 
   const submitHandler = async function(data: FormFields) {
-    const { error } = await supabase.auth.signInWithPassword(data);
+    const { error } = await supabase.auth.signInWithPassword({
+      email: data.email,
+      password: data.password,
+    });
     setError(error);
     if (!error) {
       redirect("/dashboard");
