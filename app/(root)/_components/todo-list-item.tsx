@@ -2,6 +2,7 @@ import { openTodo } from "@/lib/features/todos/todosSlice";
 import { TodoItem } from "@/types";
 import React from "react";
 import { useDispatch } from "react-redux";
+import TodoDropdown from "./todo-dropdown";
 
 const TodoListItem = ({ todo }: { todo: TodoItem }) => {
   const dispatch = useDispatch();
@@ -19,14 +20,7 @@ const TodoListItem = ({ todo }: { todo: TodoItem }) => {
       </div>
 
       <div className="items-end flex flex-col justify-between h-full">
-        <button
-          className="flex items-center gap-[2px] px-0 py-0"
-          aria-label="Toggle Task Options Menu"
-        >
-          <div className="w-[4px] h-[4px] rounded-full bg-foreground"></div>
-          <div className="w-[4px] h-[4px] rounded-full bg-foreground"></div>
-          <div className="w-[4px] h-[4px] rounded-full bg-foreground"></div>
-        </button>
+        <TodoDropdown todo={todo} />
         <div className="flex items-center gap-4 font-sans">
           <div className="uppercase bg-foreground text-background rounded-[4px] text-base px-4 py-2 ">
             {todo.state}
