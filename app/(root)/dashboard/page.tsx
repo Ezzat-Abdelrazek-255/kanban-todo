@@ -5,10 +5,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import React from "react";
 import { ArrowUpDown, Filter, List, WalletCards } from "lucide-react";
-import TaskList from "../_components/task-list";
+import TodoList from "../_components/todo-list";
 import { useSelector } from "react-redux";
 import { RootState } from "@/lib/store";
-import TaskView from "../_components/task-view";
+import TodoView from "../_components/todo-view";
 import { selectOpenTodo } from "@/lib/features/todos/todosSlice";
 
 const DashboardPage = () => {
@@ -51,9 +51,9 @@ const DashboardPage = () => {
           </TabsList>
         </div>
         <TabsContent value="list">
-          <TaskList />
+          <TodoList />
         </TabsContent>
-        {openTodo && <TaskView todo={openTodo} />}
+        {openTodo && <TodoView todo={openTodo} />}
       </Tabs>
     </main>
   );

@@ -5,7 +5,7 @@ import { X } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { closeTodo } from "@/lib/features/todos/todosSlice";
 
-const TaskView = ({ todo }: { todo: TodoItem }) => {
+const TodoView = ({ todo }: { todo: TodoItem }) => {
   const dispatch = useDispatch();
   return (
     <>
@@ -53,4 +53,4 @@ const TaskView = ({ todo }: { todo: TodoItem }) => {
   );
 };
 
-export default TaskView;
+export default TodoView;

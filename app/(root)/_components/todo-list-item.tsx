@@ -3,7 +3,7 @@ import { TodoItem } from "@/types";
 import React from "react";
 import { useDispatch } from "react-redux";
 
-const TaskListItem = ({ todo }: { todo: TodoItem }) => {
+const TodoListItem = ({ todo }: { todo: TodoItem }) => {
   const dispatch = useDispatch();
 
   return (
@@ -40,4 +40,4 @@ const TaskListItem = ({ todo }: { todo: TodoItem }) => {
   );
 };
 
-export default TaskListItem;
+export default TodoListItem;
