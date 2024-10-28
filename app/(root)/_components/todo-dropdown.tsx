@@ -13,6 +13,7 @@ import { deleteTodo } from "@/lib/features/todos/todosSlice";
 import { createClient } from "@/utils/supabase/client";
 import { redirect } from "next/navigation";
 import { PostgrestError } from "@supabase/supabase-js";
+import Loader from "@/components/loader";
 
 const TodoDropdown = ({
   todo,
@@ -68,7 +69,7 @@ const TodoDropdown = ({
         </DropdownMenuItem>
         <DropdownMenuItem className="focus:bg-background flex flex-col gap-2 items-start">
           <Button variant="outline" onClick={handleDeleteTodo}>
-            Delete
+            {isDeleting ? <Loader /> : "Delete"}
             <Trash2 />
           </Button>
           <p>{error?.message}</p>
