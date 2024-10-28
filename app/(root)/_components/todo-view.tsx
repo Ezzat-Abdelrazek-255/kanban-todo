@@ -4,7 +4,6 @@ import React from "react";
 import { X } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { closeTodo } from "@/lib/features/todos/todosSlice";
-import { SUPABASE_IMAGES_BASE_URL } from "@/constants";
 
 const TodoView = ({ todo }: { todo: TodoItem }) => {
   const dispatch = useDispatch();
@@ -23,7 +22,7 @@ const TodoView = ({ todo }: { todo: TodoItem }) => {
             fill
             sizes="80vw"
             className="w-full h-full object-cover"
-            src={`${SUPABASE_IMAGES_BASE_URL}${todo.coverImgUrl}`}
+            src={todo.coverImgUrl}
             alt={todo.title}
           />
         </div>

@@ -8,7 +8,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import React, { useState } from "react";
-import { PRIORITY_FILTER_OPTIONS, STATE_FILTER_OPTIONS } from "@/constants";
+import {
+  PRIORITY_FILTER_OPTIONS,
+  STATE_FILTER_OPTIONS,
+  SUPABASE_IMAGES_BASE_URL,
+} from "@/constants";
 import { Button } from "@/components/ui/button";
 import { addTodo } from "@/lib/features/todos/todosSlice";
 import { useForm, Controller } from "react-hook-form";
@@ -80,7 +84,7 @@ const TodoCreate = ({
         user_id: authData.user.id,
         owner_username: userData && userData[0].username,
         state: data.state, // default state
-        cover_img_url: coverImgUrl,
+        cover_img_url: `${SUPABASE_IMAGES_BASE_URL}${coverImgUrl}`,
       })
       .select()
       .single();
@@ -92,7 +96,7 @@ const TodoCreate = ({
       addTodo({
         ...data,
         id: insertedData.id,
-        coverImgUrl,
+        coverImgUrl: `${SUPABASE_IMAGES_BASE_URL}${coverImgUrl}`,
         ownerUsername: userData && userData[0].username,
         isOpen: false,
       }),
