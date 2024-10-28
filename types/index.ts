@@ -18,3 +18,9 @@ export type TodoItem = {
   updatedAt: string;
   isOpen: boolean;
 };
+
+export type DragItem = {
+  id: string;
+  state: TodoState;
+  type: string;
+};

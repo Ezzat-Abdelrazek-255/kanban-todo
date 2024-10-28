@@ -2,9 +2,8 @@
 
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Input } from "@/components/ui/input";
 import React, { useState } from "react";
-import { ArrowUpDown, Filter, List, WalletCards } from "lucide-react";
+import { List, WalletCards } from "lucide-react";
 import TodoList from "../_components/todo-list";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/lib/store";
@@ -20,6 +19,8 @@ import { PRIORITY_FILTER_OPTIONS, STATE_FILTER_OPTIONS } from "@/constants";
 import TodoSearch from "../_components/todo-search";
 import TodoCreate from "../_components/todo-create";
 import TodoCards from "../_components/todo-cards";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 
 const DashboardPage = () => {
   const dispatch = useDispatch();
@@ -87,10 +88,12 @@ const DashboardPage = () => {
           </Button>
         </TabsContent>
         <TabsContent value="cards">
-          <TodoCards
-            setDefaultState={setDefaultState}
-            setIsCreatingTodo={setIsCreatingTodo}
-          />
+          <DndProvider backend={HTML5Backend}>
+            <TodoCards
+              setDefaultState={setDefaultState}
+              setIsCreatingTodo={setIsCreatingTodo}
+            />
+          </DndProvider>
         </TabsContent>
         {isCreatingTodo && (
           <TodoCreate

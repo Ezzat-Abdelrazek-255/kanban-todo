@@ -76,7 +76,6 @@ const TodoEdit = ({
   console.log(errors);
 
   const submitHandler = async function(data: FormFields) {
-    console.log("hey");
     const supabase = createClient();
     const { data: authData, error } = await supabase.auth.getUser();
     if (error || !authData?.user) {
@@ -115,7 +114,7 @@ const TodoEdit = ({
       <div className="bg-black/50 fixed inset-0 w-full h-full"></div>
       <form
         onSubmit={handleSubmit(submitHandler)}
-        className="bg-black z-10 w-[40rem] p-6 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col gap-6 border-muted border-[1px] rounded-[8px]"
+        className="bg-black z-50 w-[40rem] p-6 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col gap-6 border-muted border-[1px] rounded-[8px]"
       >
         <div className="w-[21.875rem] flex flex-col gap-4">
           <div className="flex flex-col gap-2">
