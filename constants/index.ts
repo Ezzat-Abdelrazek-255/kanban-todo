@@ -59,11 +59,6 @@ export const DEMO_LOGIN_CREDENTIALS = [
     email: "taskowner2023@gmail.com",
     password: "taskowner2024",
   },
-  {
-    username: "employee",
-    email: "employee2024@gmail.com",
-    password: "employee2024",
-  },
 ];
 
 export const TEST_TODOS: TodoItem[] = [

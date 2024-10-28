@@ -12,27 +12,30 @@ const TodoCard = ({ todo, state }: { todo: TodoItem; state: TodoState }) => {
   const [isEditOpen, setIsEditOpen] = useState(false);
 
   const elementRef = useRef<HTMLElement>(null);
-  // Set up drop target
+
+  // Set up drag functionality
   const [{ isDragging }, dragRef] = useDrag<
     DragItem,
     void,
     { isDragging: boolean }
   >({
     type: "TodoCard",
-    item: { id: todo.id, state, type: "TodoCard" },
+    item: { id: todo.id, state, type: "TodoCard" }, // Define the dragged item's properties
     collect: (monitor) => ({
+      // Monitor if the card is currently being dragged
       isDragging: monitor.isDragging(),
     }),
   });
 
+  // Attach dragRef to the card element for drag behavior
   dragRef(elementRef);
 
   return (
     <article
       key={todo.id}
       className={cn(
-        " z-base transition-opacity duration-200 relative w-full h-[18.375rem] px-4 py-[7.1875rem] rounded-[8px] overflow-hidden",
-        isDragging ? "opacity-50" : "opacity-100",
+        "z-base transition-opacity duration-200 relative w-full h-[18.375rem] px-4 py-[7.1875rem] rounded-[8px] overflow-hidden",
+        isDragging ? "opacity-50" : "opacity-100", // Apply transparency when dragging
       )}
       ref={elementRef}
     >
@@ -55,6 +58,7 @@ const TodoCard = ({ todo, state }: { todo: TodoItem; state: TodoState }) => {
         </p>
       </div>
 
+      {/* Display edit modal when isEditOpen is true */}
       {isEditOpen && <TodoEdit todo={todo} setIsEditOpen={setIsEditOpen} />}
     </article>
   );

@@ -24,15 +24,19 @@ const TodoCards = ({
   const handleDrop = async (todoId: string, targetState: TodoState) => {
     const supabase = createClient();
     const { data: authData, error } = await supabase.auth.getUser();
+
+    // Redirect if there's no authenticated user
     if (error || !authData?.user) {
       redirect("/login");
     }
 
+    // Update the todo state in Supabase
     await supabase
       .from("todos")
       .update({ state: targetState })
       .eq("id", todoId);
 
+    // Update the todo state in Redux store
     dispatch(
       updateTodo({
         id: todoId,
@@ -47,11 +51,11 @@ const TodoCards = ({
     <div className="flex gap-16">
       {TODO_STATE.map((state) => (
         <TodoCardColumn
-          onDrop={handleDrop}
+          onDrop={handleDrop} // Pass drop handler to column for drag-and-drop
           setDefaultState={setDefaultState}
           key={state}
           state={state as TodoState}
-          todos={todos.filter((todo) => todo.state === state)}
+          todos={todos.filter((todo) => todo.state === state)} // Filter todos by state
           setIsCreatingTodo={setIsCreatingTodo}
         />
       ))}

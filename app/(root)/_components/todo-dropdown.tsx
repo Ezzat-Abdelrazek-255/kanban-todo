@@ -30,28 +30,36 @@ const TodoDropdown = ({
     const supabase = createClient();
     const { error: authError } = await supabase.auth.getUser();
 
+    // Redirect if user is not authenticated
     if (authError) {
       return redirect("/login");
     }
 
-    setIsDeleting(true);
+    setIsDeleting(true); // Show loader while deleting
+
+    // Delete the todo item in Supabase
     const { error: deleteError } = await supabase
       .from("todos")
       .delete()
       .eq("id", todo.id);
 
-    setIsDeleting(false);
+    setIsDeleting(false); // Hide loader after deletion attempt
     if (deleteError) {
+      // Display error if deletion fails
       return setError(deleteError);
     }
+
+    // Remove the todo from Redux store
     dispatch(deleteTodo(todo.id));
   };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
         className="flex items-center gap-1 px-0 py-0"
         aria-label="Toggle Task Options Menu"
       >
+        {/* Three dots as the dropdown trigger */}
         <div className="w-[8px] h-[8px] rounded-full bg-foreground"></div>
         <div className="w-[8px] h-[8px] rounded-full bg-foreground"></div>
         <div className="w-[8px] h-[8px] rounded-full bg-foreground"></div>
@@ -61,7 +69,7 @@ const TodoDropdown = ({
           <Button
             onClick={() => setIsEditOpen(true)}
             variant="outline"
-            className=" w-full flex gap-2 justify-between"
+            className="w-full flex gap-2 justify-between"
           >
             Edit
             <Pencil />
@@ -72,6 +80,7 @@ const TodoDropdown = ({
             {isDeleting ? <Loader /> : "Delete"}
             <Trash2 />
           </Button>
+          {/* Display error message if deletion fails */}
           <p>{error?.message}</p>
         </DropdownMenuItem>
       </DropdownMenuContent>

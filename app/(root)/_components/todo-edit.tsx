@@ -26,11 +26,13 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import ImageUpload from "./todo-image-upload";
 
+// Type for form fields, excluding auto-generated or computed fields
 type FormFields = Omit<
   ReturnType<typeof addTodo>["payload"],
   "ownerUsername" | "coverImgUrl" | "isOpen"
 >;
 
+// Validation schema for the todo form
 const schema: yup.ObjectSchema<FormFields> = yup.object({
   title: yup.string().required(),
   description: yup.string().required(),
@@ -52,6 +54,7 @@ const TodoEdit = ({
   setIsEditOpen: (isOpen: boolean) => void;
   todo: TodoItem;
 }) => {
+  // Initialize form with react-hook-form, including validation and default values
   const {
     register,
     control,
@@ -69,28 +72,32 @@ const TodoEdit = ({
     mode: "onChange",
   });
 
+  // State management for image upload and error handling
   const [uploading, setUploading] = useState(false);
   const dispatch = useDispatch();
   const [error, setError] = useState<PostgrestError | null>(null);
   const [coverImgUrl, setCoverImgUrl] = useState(todo.coverImgUrl);
-  console.log(errors);
 
+  // Handle form submission - updates both Supabase and Redux store
   const submitHandler = async function(data: FormFields) {
+    // Verify user authentication
     const supabase = createClient();
     const { data: authData, error } = await supabase.auth.getUser();
     if (error || !authData?.user) {
       redirect("/login");
     }
 
+    // Update todo in Supabase
     const { error: updateError } = await supabase
       .from("todos")
       .update({ ...data, cover_img_url: coverImgUrl })
       .eq("id", todo.id);
-    console.log(updateError);
 
     if (updateError) {
       return setError(updateError);
     }
+
+    // Update todo in Redux store
     dispatch(
       updateTodo({
         id: todo.id,
@@ -105,18 +112,22 @@ const TodoEdit = ({
     );
     setIsEditOpen(false);
   };
+
+  // Handle successful image upload
   const onUploadComplete = function(imageMetaData: ImageMetadata) {
     setCoverImgUrl(`${SUPABASE_IMAGES_BASE_URL}${imageMetaData.path}`);
   };
 
   return (
     <>
+      {/* Modal overlay */}
       <div className="bg-black/50 fixed inset-0 w-full h-full"></div>
       <form
         onSubmit={handleSubmit(submitHandler)}
         className="bg-black z-50 w-[40rem] p-6 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col gap-6 border-muted border-[1px] rounded-[8px]"
       >
         <div className="w-[21.875rem] flex flex-col gap-4">
+          {/* Title input field */}
           <div className="flex flex-col gap-2">
             <label htmlFor="title" className="font-sans text-xl leading-[85%]">
               Title
@@ -129,6 +140,8 @@ const TodoEdit = ({
               {...register("title", { required: true })}
             />
           </div>
+
+          {/* Description textarea */}
           <div className="flex flex-col gap-2">
             <label
               htmlFor="description"
@@ -144,6 +157,8 @@ const TodoEdit = ({
               {...register("description", { required: true })}
             />
           </div>
+
+          {/* Image upload section */}
           <div className="flex flex-col gap-2">
             <label
               htmlFor="cover-image"
@@ -162,6 +177,8 @@ const TodoEdit = ({
               </p>
             )}
           </div>
+
+          {/* Priority select with controller for form integration */}
           <div className="flex flex-col gap-2">
             <label
               htmlFor="priority"
@@ -193,6 +210,8 @@ const TodoEdit = ({
               )}
             />
           </div>
+
+          {/* State select with controller for form integration */}
           <div className="flex flex-col gap-2">
             <label
               htmlFor="state"
@@ -225,6 +244,8 @@ const TodoEdit = ({
             />
           </div>
         </div>
+
+        {/* Submit button and error display */}
         <div className="self-end flex flex-col items-end font-sans">
           <Button
             disabled={isSubmitting || uploading}
@@ -235,6 +256,8 @@ const TodoEdit = ({
           </Button>
           <p className="font-serif text-red-500 text-sm">{error?.message}</p>
         </div>
+
+        {/* Close button */}
         <button
           type="button"
           className="rounded-full absolute top-6 right-6 w-[1.5rem] h-[1.5rem] bg-foreground text-background z-20 grid place-content-center"

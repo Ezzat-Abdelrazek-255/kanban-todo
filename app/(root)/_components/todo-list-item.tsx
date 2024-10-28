@@ -14,7 +14,8 @@ const TodoListItem = ({ todo }: { todo: TodoItem }) => {
       <div className="flex flex-col gap-4 max-w-[230px]">
         <button
           onClick={() => dispatch(openTodo({ id: todo.id }))}
-          className="text-2xl text-left  leading-[85%] font-sans whitespace-nowrap"
+          // Dispatch action to open a specific todo item based on its ID
+          className="text-2xl text-left leading-[85%] font-sans whitespace-nowrap"
         >
           {todo.title}
         </button>
@@ -22,8 +23,10 @@ const TodoListItem = ({ todo }: { todo: TodoItem }) => {
       </div>
 
       <div className="items-end flex flex-col justify-between h-full">
+        {/* Dropdown menu with edit/delete options */}
         <TodoDropdown todo={todo} setIsEditOpen={setIsEditOpen} />
         <div className="flex items-center gap-4 font-sans">
+          {/* Display todo state and priority */}
           <div className="uppercase bg-foreground text-background rounded-[4px] text-base px-4 py-2 ">
             {todo.state}
           </div>
@@ -32,6 +35,7 @@ const TodoListItem = ({ todo }: { todo: TodoItem }) => {
           </div>
         </div>
       </div>
+      {/* Show edit component if edit mode is active */}
       {isEditOpen && <TodoEdit todo={todo} setIsEditOpen={setIsEditOpen} />}
     </li>
   );

@@ -29,11 +29,13 @@ import ImageUpload from "./todo-image-upload";
 import { ImageMetadata, TodoState } from "@/types";
 import { RootState } from "@/lib/store";
 
+// Type definition excluding auto-generated fields from the form data
 type FormFields = Omit<
   ReturnType<typeof addTodo>["payload"],
   "isOpen" | "coverImgUrl" | "ownerUsername" | "id"
 >;
 
+// Validation schema for the todo creation form
 const schema: yup.ObjectSchema<FormFields> = yup.object({
   title: yup.string().required(),
   description: yup.string().required(),
@@ -50,6 +52,7 @@ const TodoCreate = ({
 }) => {
   const todosView = useSelector((state: RootState) => state.todos.view);
 
+  // Initialize form with react-hook-form and yup validation
   const {
     register,
     control,
@@ -68,18 +71,23 @@ const TodoCreate = ({
   const [coverImgUrl, setCoverImgUrl] = useState("");
   const [uploading, setUploading] = useState<boolean>(false);
 
+  // Handle form submission and data persistence to Supabase
   const submitHandler = async function(data: FormFields) {
     const supabase = createClient();
+
+    // Verify user authentication
     const { data: authData, error } = await supabase.auth.getUser();
     if (error || !authData?.user) {
       redirect("/login");
     }
 
+    // Fetch user profile data to get username
     const { data: userData } = await supabase
       .from("profiles")
       .select("username")
       .eq("id", authData.user.id);
 
+    // Insert new todo into Supabase
     const { data: insertedData, error: insertError } = await supabase
       .from("todos")
       .insert({
@@ -88,7 +96,7 @@ const TodoCreate = ({
         priority: data.priority,
         user_id: authData.user.id,
         owner_username: userData && userData[0].username,
-        state: data.state, // default state
+        state: data.state,
         cover_img_url: `${SUPABASE_IMAGES_BASE_URL}${coverImgUrl}`,
       })
       .select()
@@ -97,6 +105,8 @@ const TodoCreate = ({
     if (insertError) {
       return setError(insertError);
     }
+
+    // Update Redux store with the new todo
     dispatch(
       addTodo({
         ...data,
@@ -109,12 +119,14 @@ const TodoCreate = ({
     setIsOpen(false);
   };
 
+  // Callback for when image upload is completed
   const onUploadComplete = function(imageMetaData: ImageMetadata) {
     setCoverImgUrl(imageMetaData.path);
   };
 
   return (
     <>
+      {/* Modal overlay */}
       <div className="bg-black/50 fixed inset-0 w-full h-full"></div>
       <form
         onSubmit={handleSubmit(submitHandler)}
@@ -127,7 +139,7 @@ const TodoCreate = ({
             </label>
             <Input
               id="title"
-              placeholder="Finish Landing Page"
+              placeholder="Task Title"
               className="p-2 bg-black border-muted font-serif rounded-[4px] text-xs"
               {...register("title", { required: true })}
             />
@@ -141,7 +153,7 @@ const TodoCreate = ({
             </label>
             <Textarea
               id="description"
-              placeholder="Finish Landing Page"
+              placeholder="Task Description"
               className="p-2 bg-black border-muted font-serif rounded-[4px] text-xs"
               {...register("description", { required: true })}
             />
@@ -171,6 +183,7 @@ const TodoCreate = ({
             >
               Priority
             </label>
+            {/* Controlled select component for priority with validation */}
             <Controller
               name="priority"
               control={control}
@@ -200,6 +213,7 @@ const TodoCreate = ({
             >
               State
             </label>
+            {/* Controlled select component for state with validation */}
             <Controller
               name="state"
               control={control}
@@ -229,6 +243,7 @@ const TodoCreate = ({
           </Button>
           <p className="font-serif text-red-500 text-sm">{error?.message}</p>
         </div>
+        {/* Close modal button */}
         <button
           type="button"
           className="rounded-full absolute top-6 right-6 w-[1.5rem] h-[1.5rem] bg-foreground text-background z-20 grid place-content-center"

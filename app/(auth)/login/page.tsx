@@ -11,11 +11,13 @@ import { redirect } from "next/navigation";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 
+// Define the shape of form data with TypeScript for type safety
 type FormFields = {
   email: string;
   password: string;
 };
 
+// Validation schema using Yup - defines rules for email and password validation
 const schema: yup.ObjectSchema<FormFields> = yup.object({
   email: yup.string().email().required(),
   password: yup.string().required(),
@@ -23,6 +25,8 @@ const schema: yup.ObjectSchema<FormFields> = yup.object({
 
 const LoginPage = () => {
   const supabase = createClient();
+
+  // Initialize form handling with React Hook Form, including validation
   const {
     register,
     handleSubmit,
@@ -30,8 +34,10 @@ const LoginPage = () => {
   } = useForm<FormFields>({
     resolver: yupResolver(schema),
   });
+
   const [error, setError] = useState<AuthError | null>(null);
 
+  // Handle form submission - attempt login and redirect on success
   const submitHandler = async function(data: FormFields) {
     const { error } = await supabase.auth.signInWithPassword({
       email: data.email,
@@ -84,6 +90,7 @@ const LoginPage = () => {
               {errors.password && <p>{errors.password.message}</p>}
             </div>
           </div>
+          {/* Show loader during form submission, otherwise show login button */}
           <Button
             type="submit"
             className="font-sans grid place-content-center w-[25rem] text-2xl py-5 max-w-[400px] h-[3.75rem]"
@@ -91,11 +98,13 @@ const LoginPage = () => {
             {isSubmitting ? <Loader /> : "Login"}
           </Button>
         </form>
+        {/* Display authentication errors if any */}
         <p className="font-serif mt-4 text-red-500">{error?.message}</p>
         <div className="font-sans text-xl mt-6">
           <p>Is this your first time here?</p>
           <p>To explore this site, log in with the role of:</p>
         </div>
+        {/* Display demo credentials for easy access */}
         <ul className="mt-4 text-base text-white/50 font-serif flex-col flex gap-3">
           {DEMO_LOGIN_CREDENTIALS.map((credentials) => (
             <li key={credentials.username}>

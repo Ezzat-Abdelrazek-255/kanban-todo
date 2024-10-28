@@ -1,5 +1,4 @@
 "use client";
-
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import React, { useState } from "react";
@@ -24,20 +23,27 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 
 const DashboardPage = () => {
   const dispatch = useDispatch();
+  // Get currently opened todo item from Redux store
   const openTodo = useSelector((state: RootState) => selectOpenTodo(state));
+  // Track current view mode (list or cards)
   const todosView = useSelector((state: RootState) => state.todos.view);
+
+  // State for todo creation modal and default state when creating from kanban view
   const [isCreatingTodo, setIsCreatingTodo] = useState(false);
   const [defaultState, setDefaultState] = useState<TodoState>();
 
   return (
     <main className="mt-8 h-full flex-grow">
+      {/* Tabs component handling view switching between list and card views */}
       <Tabs
         defaultValue={todosView}
         onValueChange={(value) => dispatch(setView(value as "list" | "cards"))}
       >
+        {/* Header section containing search and filters */}
         <div className="w-full border-muted flex items-center justify-between border-[1px] rounded-[8px] p-4">
           <div className="flex items-center gap-4 font-sans text-base">
             <TodoSearch />
+            {/* Filter components for todo state and priority */}
             <TodoFilter
               placeholder="Filter by state"
               options={STATE_FILTER_OPTIONS}
@@ -61,6 +67,7 @@ const DashboardPage = () => {
               }
             />
           </div>
+          {/* View mode toggles */}
           <TabsList>
             <TabsTrigger
               value="list"
@@ -78,6 +85,8 @@ const DashboardPage = () => {
             </TabsTrigger>
           </TabsList>
         </div>
+
+        {/* List view content */}
         <TabsContent value="list">
           <TodoList />
           <Button
@@ -87,6 +96,8 @@ const DashboardPage = () => {
             Create Task
           </Button>
         </TabsContent>
+
+        {/* Kanban card view with drag-and-drop functionality */}
         <TabsContent value="cards">
           <DndProvider backend={HTML5Backend}>
             <TodoCards
@@ -95,6 +106,8 @@ const DashboardPage = () => {
             />
           </DndProvider>
         </TabsContent>
+
+        {/* Modals for creating and viewing todos */}
         {isCreatingTodo && (
           <TodoCreate
             setIsOpen={setIsCreatingTodo}

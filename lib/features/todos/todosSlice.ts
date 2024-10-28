@@ -48,6 +48,12 @@ const todosSlice = createSlice({
       state.todos = initialTodos;
       state.isLoading = false;
     },
+    startLoading: (state) => {
+      state.isLoading = true;
+    },
+    clearTodos: (state) => {
+      state.todos = [];
+    },
     setView: (state, action: PayloadAction<"list" | "cards">) => {
       state.view = action.payload;
     },
@@ -152,6 +158,7 @@ export const selectFilteredTodos = (state: { todos: TodoState }) => {
 };
 
 export const {
+  clearTodos,
   initializeTodos,
   openTodo,
   closeTodo,
@@ -163,6 +170,7 @@ export const {
   updateTodoState,
   updatePriority,
   setView,
+  startLoading,
 } = todosSlice.actions;
 
 export default todosSlice.reducer;

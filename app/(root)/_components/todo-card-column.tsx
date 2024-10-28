@@ -19,7 +19,8 @@ const TodoCardColumn = ({
   onDrop: (id: string, targetState: TodoState) => void;
 }) => {
   const container = useRef<HTMLDivElement>(null);
-  // Set up drop target
+
+  // Set up the drop target for drag-and-drop functionality
   const [{ isOver, canDrop }, dropRef] = useDrop<
     DragItem,
     void,
@@ -27,18 +28,23 @@ const TodoCardColumn = ({
   >({
     accept: "TodoCard",
     drop: (item: DragItem) => {
+      // Only trigger onDrop if the item is moving to a different state
       if (item.state !== state) {
         onDrop(item.id, state);
       }
       return undefined;
     },
     collect: (monitor) => ({
+      // Track if the item is over this component and can be dropped here
       isOver: monitor.isOver(),
       canDrop: monitor.canDrop(),
     }),
   });
+
+  // Connect dropRef to the container element
   dropRef(container);
 
+  // Show the create todo form and set the default state for the new todo
   const handleCreateTodo = () => {
     setIsCreatingTodo(true);
     setDefaultState(state);
@@ -69,6 +75,7 @@ const TodoCardColumn = ({
           isOver && "bg-primary/10 rounded-lg",
         )}
       >
+        {/* Render each todo item as a card */}
         {todos.map((todo) => (
           <TodoCard key={todo.id} todo={todo} state={state} />
         ))}
