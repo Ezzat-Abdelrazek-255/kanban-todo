@@ -1,3 +1,9 @@
+export type ImageMetadata = {
+  path: string;
+  size: number;
+  mime_type: string;
+};
+
 export type TodoItem = {
   id: string;
   title: string;

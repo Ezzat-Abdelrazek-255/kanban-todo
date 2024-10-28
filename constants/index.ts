@@ -1,5 +1,8 @@
 import { TodoItem } from "@/types";
 
+export const SUPABASE_IMAGES_BASE_URL =
+  "https://gdlbinnbghlgzhwlhwfn.supabase.co/storage/v1/object/public/todo_covers/";
+
 export const STATE_FILTER_OPTIONS = [
   {
     title: "All",

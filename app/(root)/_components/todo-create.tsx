@@ -19,6 +19,8 @@ import { redirect } from "next/navigation";
 import { PostgrestError } from "@supabase/supabase-js";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import ImageUpload from "./todo-image-upload";
+import { ImageMetadata } from "@/types";
 
 type FormFields = Omit<
   ReturnType<typeof addTodo>["payload"],
@@ -54,6 +56,8 @@ const TodoCreate = ({
 
   const dispatch = useDispatch();
   const [error, setError] = useState<PostgrestError | null>(null);
+  const [coverImgUrl, setCoverImgUrl] = useState("");
+  const [uploading, setUploading] = useState<boolean>(false);
 
   const submitHandler = async function(data: FormFields) {
     const supabase = createClient();
@@ -76,6 +80,7 @@ const TodoCreate = ({
         user_id: authData.user.id,
         owner_username: userData && userData[0].username,
         state: data.state, // default state
+        cover_img_url: coverImgUrl,
       })
       .select()
       .single();
@@ -87,12 +92,16 @@ const TodoCreate = ({
       addTodo({
         ...data,
         id: insertedData.id,
-        coverImgUrl: "",
+        coverImgUrl,
         ownerUsername: userData && userData[0].username,
         isOpen: false,
       }),
     );
     setIsOpen(false);
+  };
+
+  const onUploadComplete = function(imageMetaData: ImageMetadata) {
+    setCoverImgUrl(imageMetaData.path);
   };
 
   return (
@@ -128,21 +137,24 @@ const TodoCreate = ({
               {...register("description", { required: true })}
             />
           </div>
-          {/* <div className="flex flex-col gap-2"> */}
-          {/*   <label */}
-          {/*     htmlFor="cover-image" */}
-          {/*     className="font-sans text-base leading-[85%]" */}
-          {/*   > */}
-          {/*     Cover Image */}
-          {/*   </label> */}
-          {/*   <Input */}
-          {/*     type="file" */}
-          {/*     id="cover-image" */}
-          {/*     placeholder="Finish Landing Page" */}
-          {/*     className="p-2 bg-black border-muted font-serif rounded-[4px] text-xs" */}
-          {/*     {...register("coverImgUrl", { required: true })} */}
-          {/*   /> */}
-          {/* </div> */}
+          <div className="flex flex-col gap-2">
+            <label
+              htmlFor="cover-image"
+              className="font-sans text-base leading-[85%]"
+            >
+              Cover Image
+            </label>
+            <ImageUpload
+              setUploading={setUploading}
+              uploading={uploading}
+              onUploadComplete={onUploadComplete}
+            />
+            {uploading && (
+              <p className="font-serif text-xs">
+                Uploading your image please wait
+              </p>
+            )}
+          </div>
           <div className="flex flex-col gap-2">
             <label
               htmlFor="priority"
@@ -199,7 +211,9 @@ const TodoCreate = ({
           </div>
         </div>
         <div className="self-end flex flex-col items-end">
-          <Button type="submit">{isSubmitting ? <Loader /> : "Submit"}</Button>
+          <Button type="submit">
+            {isSubmitting || uploading ? <Loader /> : "Submit"}
+          </Button>
           <p className="font-serif text-red-500 text-sm">{error?.message}</p>
         </div>
         <button

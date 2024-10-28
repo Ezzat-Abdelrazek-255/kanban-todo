@@ -18,8 +18,27 @@ import { createClient } from "@/utils/supabase/client";
 import { redirect } from "next/navigation";
 import { PostgrestError } from "@supabase/supabase-js";
 import { TodoItem } from "@/types";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
 
-type FormFields = Partial<ReturnType<typeof addTodo>["payload"]>;
+type FormFields = Omit<
+  ReturnType<typeof addTodo>["payload"],
+  "ownerUsername" | "coverImgUrl" | "isOpen"
+>;
+
+const schema: yup.ObjectSchema<FormFields> = yup.object({
+  title: yup.string().required(),
+  description: yup.string().required(),
+  state: yup
+    .string()
+    .oneOf(["todo", "doing", "done"] as const)
+    .required(),
+  priority: yup
+    .string()
+    .oneOf(["low", "medium", "high"] as const)
+    .required(),
+  id: yup.string().required(),
+});
 
 const TodoEdit = ({
   setIsEditOpen,
@@ -34,6 +53,7 @@ const TodoEdit = ({
     handleSubmit,
     formState: { isSubmitting },
   } = useForm({
+    resolver: yupResolver(schema),
     defaultValues: {
       title: todo.title,
       description: todo.description,

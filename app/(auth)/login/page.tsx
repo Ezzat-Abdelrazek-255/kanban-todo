@@ -8,11 +8,18 @@ import { createClient } from "@/utils/supabase/client";
 import { AuthError } from "@supabase/supabase-js";
 import Loader from "@/components/loader";
 import { redirect } from "next/navigation";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 type FormFields = {
   email: string;
   password: string;
 };
+
+const schema: yup.ObjectSchema<FormFields> = yup.object({
+  email: yup.string().email().required(),
+  password: yup.string().required(),
+});
 
 const LoginPage = () => {
   const supabase = createClient();
@@ -20,7 +27,9 @@ const LoginPage = () => {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<FormFields>();
+  } = useForm<FormFields>({
+    resolver: yupResolver(schema),
+  });
   const [error, setError] = useState<AuthError | null>(null);
 
   const submitHandler = async function(data: FormFields) {
