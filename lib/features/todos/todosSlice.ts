@@ -10,6 +10,7 @@ type TodoState = {
     search: string;
   };
   isLoading: boolean;
+  view: "list" | "cards";
 };
 
 const initialState: TodoState = {
@@ -20,6 +21,7 @@ const initialState: TodoState = {
     search: "",
   },
   isLoading: true,
+  view: "cards",
 };
 const findTodoIndex = function(id: string, todos: TodoItem[]) {
   return todos.findIndex((todo) => todo.id === id);
@@ -46,6 +48,10 @@ const todosSlice = createSlice({
       state.todos = initialTodos;
       state.isLoading = false;
     },
+    setView: (state, action: PayloadAction<"list" | "cards">) => {
+      state.view = action.payload;
+    },
+
     openTodo: (state, action: PayloadAction<{ id: string }>) => {
       const todoIndex = findTodoIndex(action.payload.id, state.todos);
 
@@ -156,6 +162,7 @@ export const {
   clearFilters,
   updateTodoState,
   updatePriority,
+  setView,
 } = todosSlice.actions;
 
 export default todosSlice.reducer;

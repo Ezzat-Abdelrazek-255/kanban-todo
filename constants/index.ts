@@ -1,7 +1,10 @@
-import { TodoItem } from "@/types";
+import { TodoItem, TodoPriority, TodoState } from "@/types";
 
 export const SUPABASE_IMAGES_BASE_URL =
   "https://gdlbinnbghlgzhwlhwfn.supabase.co/storage/v1/object/public/todo_covers/";
+
+export const TODO_STATE: TodoState[] = ["todo", "doing", "done"];
+export const TODO_PRIORITY: TodoPriority[] = ["low", "medium", "high"];
 
 export const STATE_FILTER_OPTIONS = [
   {
@@ -20,7 +23,7 @@ export const STATE_FILTER_OPTIONS = [
 
   {
     title: "Done",
-    value: "Done",
+    value: "done",
   },
 ];
 

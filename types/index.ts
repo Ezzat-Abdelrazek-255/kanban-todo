@@ -1,3 +1,5 @@
+export type TodoState = "todo" | "doing" | "done";
+export type TodoPriority = "low" | "medium" | "high";
 export type ImageMetadata = {
   path: string;
   size: number;

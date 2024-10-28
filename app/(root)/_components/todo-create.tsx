@@ -12,11 +12,13 @@ import {
   PRIORITY_FILTER_OPTIONS,
   STATE_FILTER_OPTIONS,
   SUPABASE_IMAGES_BASE_URL,
+  TODO_PRIORITY,
+  TODO_STATE,
 } from "@/constants";
 import { Button } from "@/components/ui/button";
 import { addTodo } from "@/lib/features/todos/todosSlice";
 import { useForm, Controller } from "react-hook-form";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Loader, X } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 import { redirect } from "next/navigation";
@@ -24,7 +26,8 @@ import { PostgrestError } from "@supabase/supabase-js";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import ImageUpload from "./todo-image-upload";
-import { ImageMetadata } from "@/types";
+import { ImageMetadata, TodoState } from "@/types";
+import { RootState } from "@/lib/store";
 
 type FormFields = Omit<
   ReturnType<typeof addTodo>["payload"],
@@ -34,21 +37,19 @@ type FormFields = Omit<
 const schema: yup.ObjectSchema<FormFields> = yup.object({
   title: yup.string().required(),
   description: yup.string().required(),
-  state: yup
-    .string()
-    .oneOf(["todo", "doing", "done"] as const)
-    .required(),
-  priority: yup
-    .string()
-    .oneOf(["low", "medium", "high"] as const)
-    .required(),
+  state: yup.string().oneOf(TODO_STATE).required(),
+  priority: yup.string().oneOf(TODO_PRIORITY).required(),
 });
 
 const TodoCreate = ({
   setIsOpen,
+  defaultState,
 }: {
   setIsOpen: (isOpen: boolean) => void;
+  defaultState?: TodoState;
 }) => {
+  const todosView = useSelector((state: RootState) => state.todos.view);
+
   const {
     register,
     control,
@@ -56,6 +57,10 @@ const TodoCreate = ({
     formState: { isSubmitting },
   } = useForm<FormFields>({
     resolver: yupResolver(schema),
+    defaultValues: {
+      state: todosView === "cards" ? defaultState : undefined,
+    },
+    mode: "onChange",
   });
 
   const dispatch = useDispatch();
@@ -176,11 +181,13 @@ const TodoCreate = ({
                     <SelectValue placeholder="Select a Priority" />
                   </SelectTrigger>
                   <SelectContent>
-                    {PRIORITY_FILTER_OPTIONS.map((option) => (
-                      <SelectItem key={option.value} value={option.value}>
-                        {option.title}
-                      </SelectItem>
-                    ))}
+                    {PRIORITY_FILTER_OPTIONS.map((option) =>
+                      option.value === "all" ? null : (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.title}
+                        </SelectItem>
+                      ),
+                    )}
                   </SelectContent>
                 </Select>
               )}
@@ -203,11 +210,13 @@ const TodoCreate = ({
                     <SelectValue placeholder="Select a State" />
                   </SelectTrigger>
                   <SelectContent>
-                    {STATE_FILTER_OPTIONS.map((option) => (
-                      <SelectItem key={option.value} value={option.value}>
-                        {option.title}
-                      </SelectItem>
-                    ))}
+                    {STATE_FILTER_OPTIONS.map((option) =>
+                      option.value === "all" ? null : (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.title}
+                        </SelectItem>
+                      ),
+                    )}
                   </SelectContent>
                 </Select>
               )}
@@ -215,7 +224,7 @@ const TodoCreate = ({
           </div>
         </div>
         <div className="self-end flex flex-col items-end">
-          <Button type="submit">
+          <Button disabled={isSubmitting || uploading} type="submit">
             {isSubmitting || uploading ? <Loader /> : "Submit"}
           </Button>
           <p className="font-serif text-red-500 text-sm">{error?.message}</p>

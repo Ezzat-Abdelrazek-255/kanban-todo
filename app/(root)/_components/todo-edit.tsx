@@ -8,7 +8,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import React, { useState } from "react";
-import { PRIORITY_FILTER_OPTIONS, STATE_FILTER_OPTIONS } from "@/constants";
+import {
+  PRIORITY_FILTER_OPTIONS,
+  STATE_FILTER_OPTIONS,
+  SUPABASE_IMAGES_BASE_URL,
+} from "@/constants";
 import { Button } from "@/components/ui/button";
 import { addTodo, updateTodo } from "@/lib/features/todos/todosSlice";
 import { useForm, Controller } from "react-hook-form";
@@ -17,9 +21,10 @@ import { Loader, X } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 import { redirect } from "next/navigation";
 import { PostgrestError } from "@supabase/supabase-js";
-import { TodoItem } from "@/types";
+import { ImageMetadata, TodoItem } from "@/types";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import ImageUpload from "./todo-image-upload";
 
 type FormFields = Omit<
   ReturnType<typeof addTodo>["payload"],
@@ -51,10 +56,11 @@ const TodoEdit = ({
     register,
     control,
     handleSubmit,
-    formState: { isSubmitting },
+    formState: { isSubmitting, errors },
   } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
+      id: todo.id,
       title: todo.title,
       description: todo.description,
       priority: todo.priority,
@@ -63,10 +69,14 @@ const TodoEdit = ({
     mode: "onChange",
   });
 
+  const [uploading, setUploading] = useState(false);
   const dispatch = useDispatch();
   const [error, setError] = useState<PostgrestError | null>(null);
+  const [coverImgUrl, setCoverImgUrl] = useState(todo.coverImgUrl);
+  console.log(errors);
 
   const submitHandler = async function(data: FormFields) {
+    console.log("hey");
     const supabase = createClient();
     const { data: authData, error } = await supabase.auth.getUser();
     if (error || !authData?.user) {
@@ -75,8 +85,9 @@ const TodoEdit = ({
 
     const { error: updateError } = await supabase
       .from("todos")
-      .update(data)
+      .update({ ...data, cover_img_url: coverImgUrl })
       .eq("id", todo.id);
+    console.log(updateError);
 
     if (updateError) {
       return setError(updateError);
@@ -89,10 +100,14 @@ const TodoEdit = ({
           description: data.description,
           state: data.state,
           priority: data.priority,
+          coverImgUrl,
         },
       }),
     );
     setIsEditOpen(false);
+  };
+  const onUploadComplete = function(imageMetaData: ImageMetadata) {
+    setCoverImgUrl(`${SUPABASE_IMAGES_BASE_URL}${imageMetaData.path}`);
   };
 
   return (
@@ -130,21 +145,24 @@ const TodoEdit = ({
               {...register("description", { required: true })}
             />
           </div>
-          {/* <div className="flex flex-col gap-2"> */}
-          {/*   <label */}
-          {/*     htmlFor="cover-image" */}
-          {/*     className="font-sans text-base leading-[85%]" */}
-          {/*   > */}
-          {/*     Cover Image */}
-          {/*   </label> */}
-          {/*   <Input */}
-          {/*     type="file" */}
-          {/*     id="cover-image" */}
-          {/*     placeholder="Finish Landing Page" */}
-          {/*     className="p-2 bg-black border-muted font-serif rounded-[4px] text-xs" */}
-          {/*     {...register("coverImgUrl", { required: true })} */}
-          {/*   /> */}
-          {/* </div> */}
+          <div className="flex flex-col gap-2">
+            <label
+              htmlFor="cover-image"
+              className="font-sans text-base leading-[85%]"
+            >
+              Cover Image
+            </label>
+            <ImageUpload
+              setUploading={setUploading}
+              uploading={uploading}
+              onUploadComplete={onUploadComplete}
+            />
+            {uploading && (
+              <p className="font-serif text-xs">
+                Uploading your image please wait
+              </p>
+            )}
+          </div>
           <div className="flex flex-col gap-2">
             <label
               htmlFor="priority"
@@ -209,8 +227,12 @@ const TodoEdit = ({
           </div>
         </div>
         <div className="self-end flex flex-col items-end font-sans">
-          <Button type="submit" className="uppercase">
-            {isSubmitting ? <Loader /> : "Save"}
+          <Button
+            disabled={isSubmitting || uploading}
+            type="submit"
+            className="uppercase"
+          >
+            {isSubmitting || uploading ? <Loader /> : "Save"}
           </Button>
           <p className="font-serif text-red-500 text-sm">{error?.message}</p>
         </div>
