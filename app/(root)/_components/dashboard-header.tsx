@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import LogoutBtn from "@/app/(auth)/_components/logout-btn";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import React from "react";
@@ -17,7 +17,7 @@ const DashboardHeader = async () => {
   return (
     <header className="py-6  border-b-[1px] border-b-muted flex gap-4 items-center">
       {userData && userData[0].username}
-      <Button variant="outline">Logout</Button>
+      <LogoutBtn />
     </header>
   );
 };
