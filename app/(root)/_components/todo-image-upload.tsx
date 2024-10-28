@@ -30,7 +30,7 @@ const ImageUpload = ({
       const filePath = `${fileName}`;
 
       // Upload the file to Supabase storage
-      const { data, error: uploadError } = await supabase.storage
+      const { error: uploadError } = await supabase.storage
         .from("todo_covers")
         .upload(filePath, file, {
           cacheControl: "3600",

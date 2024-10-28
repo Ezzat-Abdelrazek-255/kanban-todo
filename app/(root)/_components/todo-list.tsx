@@ -23,7 +23,7 @@ const TodoList = () => {
       )}
       {!isLoadingTodos && filteredTodos.length === 0 && (
         <p>
-          You don't have any tasks click on the button below to create your
+          You don&apos;t have any tasks click on the button below to create your
           first
         </p>
       )}

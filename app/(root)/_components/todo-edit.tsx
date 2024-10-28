@@ -59,7 +59,7 @@ const TodoEdit = ({
     register,
     control,
     handleSubmit,
-    formState: { isSubmitting, errors },
+    formState: { isSubmitting },
   } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
